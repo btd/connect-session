@@ -1,7 +1,0 @@
-1. Add general initialization like
-
-    session.initialize(loaders, options);
-
-after this should be available sessionLoad and sessionCreate.
-
-2. Add express routing to handle sessions (models do not required, because will be used store from connect)

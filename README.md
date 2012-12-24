@@ -12,34 +12,39 @@ For example you have a route that handle session management:
 First i expect you will made some configuration and create middleware function:
 
 ```javascript
-\\you session.js file
+//you config-session.js file
 var connectSession = require('connect-session'),
     session = connectSession.session,
     header = connectSession.header;
 
-var store = //there you can load any connect store you want
 
-module.exports.sessionCreate = session([header({
-    header: 'X-User-Session' //this used by default, so you can skip this
-})], {
-    store: '...' //your store
-});
+var util = require('../lib/utils');
 
-module.exports.sessionLoad = session([header({
-    header: 'X-User-Session' //this used by default, so you can skip this
-})], {
-    store: '...', //your store
+//you should replace this one with other store (but this used by default)
+var MemoryStore = require('../lib/session/memory');
+
+var loaders = [
+    header({
+        header: 'X-User-Session' //this used by default, so you can skip this
+    })
+];
+
+var options = {
+    store: new MemoryStore
+}
+
+module.exports.sessionCreate = session(loaders, options);
+
+module.exports.sessionLoad = session(loaders, util.merge(options, {
     generateOnMissingSID: false
-});
+}));
 ```
 
 ```javascript
 
-var connectSession = require('connect-session'),
-    session = connectSession.session,
-    header = connectSession.header;
+var sessionCreate = require('./config-session').sessionCreate;
 
-app.get('/sessions/new', session(), function(req, res) {
+app.get('/sessions/new', sessionCreate, function(req, res) {
     res.json({ sid: req.sessionID});
 })
 ```
@@ -54,9 +59,8 @@ If session id will not be founded new session will be created and its sid will b
 Of course you expect that session will be loaded every time it can be loaded, to make this need to add in app general middleware:
 
 ```javascript
-var connectSession = require('connect-session'),
-    session = connectSession.session,
-    header = connectSession.header;
+var sessionLoad = require('./config-session').sessionLoad;
 
-app.use
+//do not forget add all needed middleware before!!!
+app.use(sessionLoad);
 ```

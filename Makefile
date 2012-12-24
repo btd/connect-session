@@ -1,9 +1,14 @@
 
+TEST_FILES=test/*.test.js
+
+jshint:
+	./node_modules/.bin/jshint --config=./jshint.json lib
+
 test: test-unit
 
 test-unit:
 	@NODE_ENV=test ./node_modules/.bin/mocha \
-		--reporter spec
+		--reporter spec $(TEST_FILES)
 
 test-cov: 
 	@echo 'Checkin test sources coverage...'
@@ -12,7 +17,9 @@ test-cov:
 
 	@jscoverage lib _src-with-coverage
 
-	@cp -r test _test-with-coverage
+	@mkdir _test-with-coverage
+
+	@cp -r test/ _test-with-coverage/
 	@find _test-with-coverage -name '*.js' -exec sed -i '' 's/lib\//_src-with-coverage\//g' '{}' \;
 
 	@NODE_ENV=test ./node_modules/.bin/mocha \
@@ -21,4 +28,4 @@ test-cov:
 
 	@rm -rf _src-with-coverage && rm -rf _test-with-coverage
 
-.PHONY: test test-unit test-cov
+.PHONY: test test-unit test-cov jshint
