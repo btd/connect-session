@@ -1,16 +1,9 @@
 
-MOCHA_OPTS=
-REPORTER = spec
-
-start:
-	@NODE_ENV=development ./node_modules/.bin/nodemon ./server.js
-
 test: test-unit
 
 test-unit:
 	@NODE_ENV=test ./node_modules/.bin/mocha \
-		--reporter $(REPORTER) \
-		$(MOCHA_OPTS)
+		--reporter spec
 
 test-cov: 
 	@echo 'Checkin test sources coverage...'

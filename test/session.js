@@ -2,16 +2,9 @@ var should = require('should'),
 		connect = require('connect'),
 		request = require('supertest');
 
-var session = require('../lib/session')
+var session = require('..').session,
+    header = require('..').header;
 
-var header = function(options) {
-	var options = options || {},
-			header = (options.header || 'X-User-Session').toLowerCase();
-
-	return function(req) {
-		return req.headers[header];
-	}
-}
 
 var app = connect()
 	.use(session([header()]))
